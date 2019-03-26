@@ -1,6 +1,6 @@
 # AnalyticsPetty
 
-* cd founctions
+* cd functions
 * npm install firebase-tools
 * firebase login
 * firebase init
