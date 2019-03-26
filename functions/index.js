@@ -10,20 +10,36 @@ const admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
 
-exports.dar = functions.https.onRequest((req,res) =>{
-	products = ''
-	admin.firestore().collection("productos").get().then(function(querySnapshot) {
+exports.preg4 = functions.https.onRequest((req,res) =>{
+	description = '';
+    cResp = 0;
+    cDiarrea = 0;
+    cSangra = 0;
+	admin.firestore().collection("urgencias").get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        products = products + JSON.stringify(doc.data())
+        console.log(doc.data());
+        if (description === '')
+            description = 'Urgencias: <br>';
+
+        if (doc.data().description.includes('respiratorio'))
+            cResp = cResp +1;
+
+        if (doc.data().description.includes('diarrea'))
+            cDiarrea = cDiarrea +1;
+
+        if (doc.data().description.includes('sangra'))
+            cSangra = cSangra +1;
         
+        description = description + "Problemas respiratorios: " + cResp + "<br>";
+        description = description + "Problemas de diarrea : " + cDiarrea + "<br>";
+        description = description + "Problemas de sangrado: " + cSangra + "<br>";
     	})
-    res.send(products)
-    return querySnapshot
+    res.send(description);
+    return querySnapshot;
 	})
 	.catch(function(error) {
         console.log("Error getting documents: ", error);
-        throw new Error('Error')
+        throw new Error('Error');
     });
 });
